@@ -191,53 +191,54 @@ valor= valor*valor;
 maximaPaciencia = Math.floor(valor * (valor * 0.416));
 const humanCheck = document.getElementById('humanMode');
 const speedRange = document.getElementById('speedRange');
+
 const URL_ACTOR = "https://hamil4815.github.io/actorCriticPro/actorV1.json";
 const URL_SHARED = "https://hamil4815.github.io/actorCriticPro/sharedV1.json";
 
+// Variables globales para guardar los modelos
+let actorModel = null;
+let feactureModel = null; // Asumo que shared es el de características
 
+// Función genérica y reutilizable
 async function loadModel(url) {
+    console.log(`⏳ Descargando: ${url}`);
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status} al cargar ${url}`);
+    }
+    
+    const data = await response.json();
+    // Asumo que tu función 'setear' procesa el JSON para convertirlo en tensores
+    return setear(data); 
+}
+
+async function loadModels() {
     try {
-        console.log(`Descargando: ${url}...`);
-        const response = await fetch(url);
+        // Promise.all descarga ambos en paralelo. Si uno falla, todo falla.
+        const [actor, shared] = await Promise.all([
+            loadModel(URL_ACTOR),
+            loadModel(URL_SHARED)
+        ]);
 
-        if (!response.ok) {
-            throw new Error(`Error al descargar ${url}: ${response.status} ${response.statusText}`);
-        }
+        actorModel = actor;
+        feactureModel = shared;
 
-        // Obtenemos el array de datos puro
-        const modelData = await response.json();
-
-        // Lo pasamos por la "fábrica" de objetos
-        return setear(modelData);
+        console.log("✅ Todos los modelos cargados y listos.");
+        
+        // Aquí puedes llamar a la función que inicia el juego
+        // iniciarJuego(); 
 
     } catch (error) {
-        console.error(`Error crítico cargando modelo desde ${url}:`, error);
-        alert("Error cargando la IA. Revisa la consola (F12) y asegura que el servidor esté activo.");
-        return null;
+        console.error("❌ Falló la carga de modelos:", error);
     }
 }
-async function loadModels() {
-    console.log("⏳ Descargando modelos desde el servidor local...");
 
-    // Mostramos un mensaje en la interfaz si quieres
-    const statusLabel = document.getElementById('scoreDisplay');
-    statusLabel.textContent = "Cargando IA...";
+// Ejecutamos la carga
+loadModels();
 
-    // Cargamos ambos en paralelo para ganar velocidad
-    const [shared, actor] = await Promise.all([
-        loadModel(URL_SHARED),
-        loadModel(URL_ACTOR)
-    ]);
 
-    if (shared && actor) {
-        sharedModel = shared;
-        actorModel = actor;
-        console.log("modelo listo para jugar.");
-        statusLabel.textContent = "0";
-    } else {
-        alert("Error crítico: No se pudieron obtener los pesos del modelo.");
-    }
-}
+
 function setear(modelData) {
     let layers = [];
 
@@ -493,5 +494,6 @@ speedRange.addEventListener('input', () => {
 
 // --- Inicio ---
 // Intentar cargar modelos al inicio
+
 
 initGame();
