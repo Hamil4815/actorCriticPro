@@ -191,10 +191,54 @@ valor= valor*valor;
 maximaPaciencia = Math.floor(valor * (valor * 0.416));
 const humanCheck = document.getElementById('humanMode');
 const speedRange = document.getElementById('speedRange');
-const URL_SHARED = "http://192.168.56.1:5550/projectos/ActorCritic/model/sharedV1.json";
-const URL_ACTOR = "http://192.168.56.1:5550/projectos/ActorCritic/model/actorV1.json";
+const URL_ACTOR = "https://hamil4815.github.io/actorCriticPro/actorV1.json";
+const URL_SHARED = "https://hamil4815.github.io/actorCriticPro/sharedV1.json";
 
-function reconstruirModeloDesdeJSON(modelData) {
+
+async function loadModel(url) {
+    try {
+        console.log(`Descargando: ${url}...`);
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error al descargar ${url}: ${response.status} ${response.statusText}`);
+        }
+
+        // Obtenemos el array de datos puro
+        const modelData = await response.json();
+
+        // Lo pasamos por la "fábrica" de objetos
+        return setear(modelData);
+
+    } catch (error) {
+        console.error(`Error crítico cargando modelo desde ${url}:`, error);
+        alert("Error cargando la IA. Revisa la consola (F12) y asegura que el servidor esté activo.");
+        return null;
+    }
+}
+async function loadModels() {
+    console.log("⏳ Descargando modelos desde el servidor local...");
+
+    // Mostramos un mensaje en la interfaz si quieres
+    const statusLabel = document.getElementById('scoreDisplay');
+    statusLabel.textContent = "Cargando IA...";
+
+    // Cargamos ambos en paralelo para ganar velocidad
+    const [shared, actor] = await Promise.all([
+        loadModel(URL_SHARED),
+        loadModel(URL_ACTOR)
+    ]);
+
+    if (shared && actor) {
+        sharedModel = shared;
+        actorModel = actor;
+        console.log("modelo listo para jugar.");
+        statusLabel.textContent = "0";
+    } else {
+        alert("Error crítico: No se pudieron obtener los pesos del modelo.");
+    }
+}
+function setear(modelData) {
     let layers = [];
 
     for (let i = 0; i < modelData.length; i++) {
@@ -243,50 +287,7 @@ function reconstruirModeloDesdeJSON(modelData) {
     // Devolvemos la instancia real de Sequential con métodos .forward()
     return new Sequential(layers);
 }
-async function cargaModeloSnake(url) {
-    try {
-        console.log(`Descargando: ${url}...`);
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Error al descargar ${url}: ${response.status} ${response.statusText}`);
-        }
-
-        // Obtenemos el array de datos puro
-        const modelData = await response.json();
-
-        // Lo pasamos por la "fábrica" de objetos
-        return reconstruirModeloDesdeJSON(modelData);
-
-    } catch (error) {
-        console.error(`Error crítico cargando modelo desde ${url}:`, error);
-        alert("Error cargando la IA. Revisa la consola (F12) y asegura que el servidor esté activo.");
-        return null;
-    }
-}
-async function loadModels() {
-    console.log("⏳ Descargando modelos desde el servidor local...");
-
-    // Mostramos un mensaje en la interfaz si quieres
-    const statusLabel = document.getElementById('scoreDisplay');
-    statusLabel.textContent = "Cargando IA...";
-
-    // Cargamos ambos en paralelo para ganar velocidad
-    const [shared, actor] = await Promise.all([
-        cargaModeloSnake(URL_SHARED),
-        cargaModeloSnake(URL_ACTOR)
-    ]);
-
-    if (shared && actor) {
-        sharedModel = shared;
-        actorModel = actor;
-        console.log("✅ IA lista para jugar.");
-        statusLabel.textContent = "0";
-    } else {
-        alert("Error crítico: No se pudieron obtener los pesos del modelo.");
-    }
-}
-
+loadModels();
 // --- Inicialización del Juego ---
 function initGame() {
     stopGame();
@@ -492,5 +493,5 @@ speedRange.addEventListener('input', () => {
 
 // --- Inicio ---
 // Intentar cargar modelos al inicio
-loadModels();
+
 initGame();
