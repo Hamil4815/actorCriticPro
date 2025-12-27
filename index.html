@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake AI Visualizer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-play {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-play:hover {
+            background-color: #45a049;
+        }
+
+        .btn-reset {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: #d32f2f;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #333;
+            color: white;
+            width: 60px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-box span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        #gameCanvas {
+            border: 2px solid #555;
+            background-color: #000;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .mode-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Snake AI: Actor-Critic</h1>
+
+    <div class="controls">
+        <div class="mode-switch">
+            <label for="humanMode">🎮 Humano</label>
+            <input type="checkbox" id="humanMode">
+        </div>
+
+        <div>
+            <label>Grid Size (Impar):</label>
+            <input type="number" id="gridSizeInput" value="5" min="5" step="2">
+        </div>
+
+        <button class="btn-play" id="btnPlay">▶ Iniciar</button>
+        <button class="btn-reset" id="btnReset">↺ Reset</button>
+        <div style="font-size: 0.8em; color: #aaa;">Velocidad: <input type="range" id="speedRange" min="50" max="500"
+                value="200" style="width: 80px;"></div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">🍎 Frutas: <span id="scoreDisplay">0</span></div>
+        <div class="stat-box">👣 Pasos: <span id="stepDisplay">0</span></div>
+    </div>
+
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+    <script src="xx.js"></script>
+
+    <script src="logica.js"></script>
+</body>
+
+</html>
