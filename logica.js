@@ -195,10 +195,6 @@ const speedRange = document.getElementById('speedRange');
 const URL_ACTOR = "https://hamil4815.github.io/actorCriticPro/actorV1.json";
 const URL_SHARED = "https://hamil4815.github.io/actorCriticPro/sharedV1.json";
 
-// Variables globales para guardar los modelos
-let actorModel = null;
-let feactureModel = null; // Asumo que shared es el de características
-
 // Función genérica y reutilizable
 async function loadModel(url) {
     console.log(`⏳ Descargando: ${url}`);
@@ -497,3 +493,4 @@ speedRange.addEventListener('input', () => {
 
 
 initGame();
+
