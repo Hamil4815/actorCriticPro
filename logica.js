@@ -218,7 +218,7 @@ async function loadModels() {
         ]);
 
         actorModel = actor;
-        feactureModel = shared;
+        sharedModel = shared;
 
         console.log("✅ Todos los modelos cargados y listos.");
         
@@ -493,4 +493,5 @@ speedRange.addEventListener('input', () => {
 
 
 initGame();
+
 
